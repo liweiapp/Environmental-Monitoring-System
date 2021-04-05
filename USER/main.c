@@ -11,9 +11,11 @@ int main(void)
     u8 len = 11;
     u8 i = 0, t = 0;
     u16 humidity, temperature1, temperature2;
-    u32 atmosphere;
+    u32 atmosphere,ppm;
     u8 rs485buf[8] = {0x01, 0x04, 0x00, 0x01, 0x00, 0x03, 0xe1, 0xcb};
+		u8 rs485buf1[8] = {0x01, 0x03, 0x00, 0x0b, 0x00, 0x01, 0xf5, 0xc8};
     u8 rs485buf0[11];
+		u8 rs485buf2[7];
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
     delay_init(168);   //初始化延时函数
     uart_init(115200);	//初始化串口波特率为115200
@@ -27,7 +29,7 @@ int main(void)
     LCD_ShowString(65, 110, 200, 16, 16, "Temperature:        C");
     LCD_ShowString(90, 150, 200, 16, 16, "Humidity:        %");
     LCD_ShowString(75, 190, 200, 16, 16, "Atmosphere:         Pa");
-    LCD_ShowString(75, 230, 200, 16, 16, "Fire Alarm:  ");
+    LCD_ShowString(75, 230, 200, 16, 16, "Fire Alarm:         PPM");
     POINT_COLOR = BLACK; //设置字体为黑色
     LCD_ShowString(90, 400, 200, 16, 16, "Copyright (C) 2021");
     LCD_ShowString(40, 430, 300, 16, 16, "Wuhan Institute of Technology");
@@ -42,12 +44,12 @@ int main(void)
 //        }
 
         RS485_Send_Data(rs485buf, 8); //发送5个字节
-
         RS485_TX_EN = 0;				//设置为接收模式
         delay_ms(100);
         RS485_Receive_Data(rs485buf0, &len);
-
-        if(len)//接收到有数据
+			
+			
+			  if(len)//接收到有数据
         {
             if(len > 11)
             {
@@ -65,6 +67,26 @@ int main(void)
             LCD_ShowNum(160, 190, atmosphere, 8, 16);
 
         }
+				
+			  delay_ms(100);
+			
+        RS485_Send_Data(rs485buf1, 8); //发送5个字节
+        RS485_TX_EN = 0;				//设置为接收模式
+        delay_ms(100);
+        RS485_Receive_Data(rs485buf2, &len);
+				
+				if(len)//接收到有数据
+        {
+            if(len > 7)
+            {
+                len = 7; //最大是5个数据.
+            }
+
+            ppm = Get_FireAlarm(rs485buf2);
+            LCD_ShowNum(160, 230, ppm, 8, 16);
+
+        }
+
 
         t++;
         delay_ms(10);

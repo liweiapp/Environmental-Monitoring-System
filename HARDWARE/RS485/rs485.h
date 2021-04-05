@@ -19,6 +19,7 @@ u16 Get_Humidity(u8 *buf);
 u16 Get_Temperature1(u8 *buf);
 u16 Get_Temperature2(u8 *buf);
 u32 Get_Atmosphere(u8 *buf);
+u32 Get_FireAlarm(u8 *buf);
 #endif
 
 

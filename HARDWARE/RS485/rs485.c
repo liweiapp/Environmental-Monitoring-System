@@ -203,4 +203,15 @@ u32 Get_Atmosphere(u8 *buf)
 }
 
 
+/************
+返回数组获取颗粒物
+*************/
+u32 Get_FireAlarm(u8 *buf)
+{
+    u32 ppm = 0;
+    ppm = (((buf[3]) >> 4) * 4096) + ((buf[3] & 0x0f) * 256) + (((buf[4]) >> 4) * 16) + (buf[4] & 0x0f);
+    return ppm;
+}
+
+
 
